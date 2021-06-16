@@ -88,6 +88,18 @@ async def joinvc(_, message):
             )
     db[chat_id]["call"] = vc
     await message.reply_text("__**Joined The Voice Chat.**__", quote=False)
+    
+    
+@app.on_message(filters.command("leavevc") & ~filters.private)
+async def leavevc(_, message):
+    chat_id = message.chat.id
+    if chat_id in db:
+        if "call" in db[chat_id]:
+            vc = db[chat_id]["call"]
+            del db[chat_id]["call"]
+            await vc.leave_current_group_call()
+            await vc.stop()
+    await message.reply_text("__**Left The Voice Chat**__", quote=False)
 
 @app.on_message(filters.command("volume") & ~filters.private)
 async def volume_bot(_, message):
